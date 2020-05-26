@@ -47,6 +47,7 @@ resource "keycloak_realm" "archlinux" {
   remember_me = true
   display_name = "Arch Linux"
 
+  registration_allowed = true
   reset_password_allowed = true
   verify_email = true
   login_with_email_allowed = true
@@ -101,7 +102,7 @@ resource "keycloak_oidc_identity_provider" "realm_identity_provider" {
   token_url = ""
   default_scopes = ""
   post_broker_login_flow_alias = keycloak_authentication_flow.arch_post_ipr_flow.alias
-  enabled = false
+  enabled = true
   trust_email = false
   store_token = false
   backchannel_supported = false
