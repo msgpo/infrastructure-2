@@ -1,0 +1,26 @@
+---
+
+- name: install prometheus,alertmanager server
+  pacman: name=prometheus,alertmanager state=present
+
+- name: install prometheus configuration
+  template: src=prometheus.yml.j2 dest=/etc/prometheus/prometheus.yml owner=root group=root mode=644
+
+- name: install prometheus alert configuration
+  copy: src=node.rules.yml dest=/etc/prometheus/node.rules.yml owner=root group=root mode=644
+
+- name: make nginx log dir
+  file: path=/var/log/nginx/{{ monitoring_domain }} state=directory owner=root group=root mode=0755
+
+- name: install nginx configuration
+  template: src=nginx.conf.d.j2 dest=/etc/nginx/nginx.d/prometheus.conf owner=root group=root mode=644
+  notify:
+    - reload nginx
+  when: 'monitoring_domain is defined'
+  tags: ['nginx']
+
+- name: enable prometheus server service
+  systemd: name=prometheus enabled=yes daemon_reload=yes state=started
+
+- name: enable alertmanager server service
+  systemd: name=alertmanager enabled=yes daemon_reload=yes state=started

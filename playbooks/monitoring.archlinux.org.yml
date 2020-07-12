@@ -1,0 +1,15 @@
+- name: setup prometheus server
+  hosts: monitoring.archlinux.org
+  remote_user: root
+  roles:
+    - { role: firewalld }
+    - { role: common }
+    - { role: tools }
+    - { role: sshd }
+    - { role: root_ssh }
+    - { role: hardening }
+    - { role: borg-client, tags: ["borg"], when: "'borg_clients' in group_names" }
+    - { role: prometheus }
+    - { role: prometheus-server }
+    - { role: certbot }
+    - { role: nginx }

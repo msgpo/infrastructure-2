@@ -1,0 +1,36 @@
+---
+
+- name: install prometheus-node-exporter
+  pacman: name=prometheus-node-exporter,arch-audit,pacman-contrib state=present
+
+- name: install prometheus-memcached-exporter
+  pacman: name=prometheus-memcached-exporter state=present
+  when: "'memcached' in group_names"
+
+- name: install node exporter configuration
+  template: src=prometheus-node-exporter.env.j2 dest=/etc/conf.d/prometheus-node-exporter owner=root group=root mode=600
+
+- name: create textcollector directory
+  file: path="{{ prometheus_textfile_dir }}" state=directory owner=node_exporter group=node_exporter
+
+- name: install node exporter arch textcollector script
+  copy: src=arch-textcollector.sh dest=/usr/local/bin/arch-textcollector.sh owner=root group=root mode=0755
+
+- name: install node exporter arch textcollector script
+  template: src=node-textcollector.sh.j2 dest=/usr/local/bin/node-textcollector.sh owner=root group=root mode=0755
+
+- name: install node textcollector service
+  template: src=prometheus-node-textcollector.service.j2 dest=/etc/systemd/system/prometheus-node-textcollector.service owner=root group=root mode=600
+
+- name: install node textcollector timer
+  template: src=prometheus-node-textcollector.timer.j2 dest=/etc/systemd/system/prometheus-node-textcollector.timer owner=root group=root mode=600
+
+- name: enable and start prometheus node textcollector timer
+  systemd: name=prometheus-node-textcollector.timer enabled=yes daemon_reload=yes state=started
+
+- name: enable prometheus-node-exporter service
+  systemd: name=prometheus-node-exporter enabled=yes daemon_reload=yes state=started
+
+- name: enable prometheus-memcached-exporter service
+  systemd: name=prometheus-memcached-exporter enabled=yes daemon_reload=yes state=started
+  when: "'memcached' in group_names"
