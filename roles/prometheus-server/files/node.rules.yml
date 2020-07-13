@@ -201,7 +201,6 @@ groups:
       summary: "Prometheus TSDB WAL truncations failed (instance {{ $labels.instance }})"
       description: "Prometheus encountered {{ $value }} TSDB WAL truncation failures\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
 
-
 - name: arch
   interval: 60s
   rules:
@@ -222,6 +221,26 @@ groups:
     annotations:
       description: 'host {{ $labels.instance }} has out of date packages'
       summary: '{{ $labels.instance }} has {{ $value }} out of date packages'
+
+- name: borg
+  interval: 60s
+  rules:
+  - alert: BorgHetznerMissingBackup
+    expr: time() - borg_hetzner_last_archive_timestamp > 60 * 60 * 24
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: 'Borg Hetzner missing backup (instance {{ $labels.instance }})'
+      description: 'Borg has not backuped for 24 hours\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}'
+  - alert: BorgOffsiteMissingBackup
+    expr: time() - borg_offsite_last_archive_timestamp > 60 * 60 * 24
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: 'Borg Offsite missing backup (instance {{ $labels.instance }})'
+      description: 'Borg has not backuped for 24 hours\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}'
 
 - name: systemd_unit
   interval: 15s
