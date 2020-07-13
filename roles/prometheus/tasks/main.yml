@@ -13,20 +13,32 @@
 - name: create textcollector directory
   file: path="{{ prometheus_textfile_dir }}" state=directory owner=node_exporter group=node_exporter
 
-- name: install node exporter arch textcollector script
-  copy: src=arch-textcollector.sh dest=/usr/local/bin/arch-textcollector.sh owner=root group=root mode=0755
+- name: install node exporter textcollector scripts
+  copy: src={{ item }} dest=/usr/local/bin/{{ item }} owner=root group=root mode=0755
+  with_items:
+    - arch-textcollector.sh
+    - borg-textcollector.sh
 
-- name: install node exporter arch textcollector script
-  template: src=node-textcollector.sh.j2 dest=/usr/local/bin/node-textcollector.sh owner=root group=root mode=0755
+- name: install arch textcollector service
+  template: src=prometheus-arch-textcollector.service.j2 dest=/etc/systemd/system/prometheus-arch-textcollector.service owner=root group=root mode=600
 
-- name: install node textcollector service
-  template: src=prometheus-node-textcollector.service.j2 dest=/etc/systemd/system/prometheus-node-textcollector.service owner=root group=root mode=600
+- name: install arch textcollector timer
+  template: src=prometheus-arch-textcollector.timer.j2 dest=/etc/systemd/system/prometheus-arch-textcollector.timer owner=root group=root mode=600
 
-- name: install node textcollector timer
-  template: src=prometheus-node-textcollector.timer.j2 dest=/etc/systemd/system/prometheus-node-textcollector.timer owner=root group=root mode=600
+- name: enable and start prometheus arch textcollector timer
+  systemd: name=prometheus-arch-textcollector.timer enabled=yes daemon_reload=yes state=started
 
-- name: enable and start prometheus node textcollector timer
-  systemd: name=prometheus-node-textcollector.timer enabled=yes daemon_reload=yes state=started
+- name: install borg textcollector service
+  template: src=prometheus-borg-textcollector.service.j2 dest=/etc/systemd/system/prometheus-borg-textcollector.service owner=root group=root mode=600
+  when: "'borg_clients' in group_names"
+
+- name: install borg textcollector timer
+  template: src=prometheus-borg-textcollector.timer.j2 dest=/etc/systemd/system/prometheus-borg-textcollector.timer owner=root group=root mode=600
+  when: "'borg_clients' in group_names"
+
+- name: enable and start prometheus borg textcollector timer
+  systemd: name=prometheus-borg-textcollector.timer enabled=yes daemon_reload=yes state=started
+  when: "'borg_clients' in group_names"
 
 - name: enable prometheus-node-exporter service
   systemd: name=prometheus-node-exporter enabled=yes daemon_reload=yes state=started

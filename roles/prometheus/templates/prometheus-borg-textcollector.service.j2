@@ -1,0 +1,28 @@
+[Unit]
+Description=Prometheus Borg Exporter TextCollector
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/borg-textcollector.sh {{ prometheus_textfile_dir }}
+
+NoNewPrivileges=true
+LockPersonality=true
+
+PrivateDevices=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths={{ prometheus_textfile_dir }}
+
+MemoryDenyWriteExecute=true
+RemoveIPC=true
+RestrictRealtime=true
+RestrictNamespaces=true
+RestrictSUIDSGID=true
+
+ProtectHostname=true
+ProtectControlGroups=true
+ProtectKernelLogs=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectClock=true
