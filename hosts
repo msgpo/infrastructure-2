@@ -94,3 +94,10 @@ repro2.pkgbuild.com
 apollo.archlinux.org
 
 reproducible.archlinux.org
+
+[node_exporters]
+monitoring.archlinux.org
+reproducible.archlinux.org
+
+[prometheus]
+monitoring.archlinux.org

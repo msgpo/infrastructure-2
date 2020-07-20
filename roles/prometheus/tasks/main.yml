@@ -46,3 +46,8 @@
 - name: enable prometheus-memcached-exporter service
   systemd: name=prometheus-memcached-exporter enabled=yes daemon_reload=yes state=started
   when: "'memcached' in group_names"
+
+- name: open prometheus-node-exporter ipv4 port for monitoring.archlinux.org
+  firewalld: state=enabled permanent=true immediate=yes
+        rich_rule="rule family=ipv4 source address={{ hostvars['monitoring.archlinux.org']['ipv4_address'] }} port protocol=tcp port={{ prometheus_exporter_port }} accept"
+  when: "'prometheus' not in group_names"
