@@ -214,7 +214,7 @@ groups:
       summary: '{{ $labels.instance }} has {{ $value }} vulnerable packages'
 
   - alert: pacman_updates_pending
-    expr: pacman_updates_pending > 10
+    expr: pacman_updates_pending > 20
     for: 1m
     labels:
       severity: warning
