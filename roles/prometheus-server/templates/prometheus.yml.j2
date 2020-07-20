@@ -27,3 +27,14 @@ scrape_configs:
         instance: "{{ host }}"
 
     {% endfor %}
+
+  - job_name: 'gitlab_runner_exporter'
+    scrape_interval: 5s
+    static_configs:
+    {% for host in groups['gitlab_runners'] %}
+
+    - targets: ['{{ host }}:{{ gitlab_runner_exporter_port }}']
+      labels:
+        instance: "{{ host }}"
+
+    {% endfor %}

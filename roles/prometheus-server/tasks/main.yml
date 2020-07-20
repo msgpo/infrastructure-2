@@ -4,7 +4,7 @@
   pacman: name=prometheus,alertmanager state=present
 
 - name: install prometheus configuration
-  template: src=prometheus.yml.j2 dest=/etc/prometheus/prometheus.yml owner=root group=root mode=644
+  template: src=prometheus.yml.j2 dest=/etc/prometheus/prometheus.yml owner=root group=root mode=644 validate="/usr/bin/promtool check config prometheus.yml"
   notify: reload prometheus
 
 - name: install prometheus alert configuration

@@ -2,4 +2,5 @@
 
 prometheus_textfile_dir: /var/lib/node_exporter
 prometheus_exporter_port: '9100'
+gitlab_runner_exporter_port: '9252'
 prometheus_domain: monitoring.archlinux.org
