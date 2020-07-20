@@ -38,3 +38,14 @@ scrape_configs:
         instance: "{{ host }}"
 
     {% endfor %}
+
+  - job_name: 'gitlab_exporter'
+    scrape_interval: 5s
+    scheme: https
+    metrics_path: "-/metrics"
+    params:
+      token: ["{{ vault_gitlab_prometheus_token }}"]
+    static_configs:
+    - targets: ['gitlab.archlinux.org:443']
+      labels:
+        instance: "gitlab.archlinux.org"
