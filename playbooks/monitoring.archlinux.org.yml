@@ -10,6 +10,6 @@
     - { role: hardening }
     - { role: borg-client, tags: ["borg"], when: "'borg_clients' in group_names" }
     - { role: prometheus-exporters }
-    - { role: prometheus-server }
+    - { role: prometheus }
     - { role: certbot }
     - { role: nginx }
