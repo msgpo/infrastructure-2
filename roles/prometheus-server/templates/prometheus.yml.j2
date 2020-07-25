@@ -32,11 +32,13 @@ scrape_configs:
     scrape_interval: 5s
     static_configs:
     {% for host in groups['gitlab_runners'] %}
+    {% if 'runner2' not in host %}
 
     - targets: ['{{ host }}:{{ gitlab_runner_exporter_port }}']
       labels:
         instance: "{{ host }}"
 
+    {% endif %}
     {% endfor %}
 
   - job_name: 'gitlab_exporter'
